@@ -4,17 +4,24 @@ export async function POST(request) {
   const keywords = body.service || body.industry || '';
 
   try {
+    const payload = {
+      filters: {
+        keywords: keywords ? [keywords] : [],
+        award_type_codes: [
+          '02','03','04','05','06','07','08'
+        ]
+      },
+      fields: ['Award ID', 'Recipient Name', 'Award Amount'],
+      limit: 10,
+      page: 1,
+      sort: 'Award Amount',
+      order: 'desc'
+    };
+
     const response = await fetch('https://api.usaspending.gov/api/v2/search/spending_by_award/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        filters: {
-          keywords: keywords ? [keywords] : []
-        },
-        fields: ['Award ID','Recipient Name','Award Amount'],
-        limit: 10,
-        page: 1
-      })
+      body: JSON.stringify(payload)
     });
 
     const data = await response.json();
@@ -22,6 +29,7 @@ export async function POST(request) {
     return Response.json({
       success: true,
       query: keywords,
+      requestPayload: payload,
       usaspending: data
     });
   } catch (error) {
