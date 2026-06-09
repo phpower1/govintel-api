@@ -7,9 +7,7 @@ export async function POST(request) {
     const payload = {
       filters: {
         keywords: keywords ? [keywords] : [],
-        award_type_codes: [
-          '02','03','04','05','06','07','08'
-        ]
+        award_type_codes: ['A', 'B', 'C', 'D']
       },
       fields: ['Award ID', 'Recipient Name', 'Award Amount'],
       limit: 10,
