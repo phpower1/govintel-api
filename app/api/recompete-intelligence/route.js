@@ -17,7 +17,7 @@ export async function POST(request) {
         'Start Date',
         'End Date'
       ],
-      limit: 100,
+      limit: 3,
       page: 1,
       sort: 'End Date',
       order: 'asc'
