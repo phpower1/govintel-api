@@ -53,7 +53,7 @@ export async function POST(request) {
       })
       .map((award) => ({
         awardId: award['Award ID'],
-        incumbent: award['Recipient Name'],?>.......................
+        incumbent: award['Recipient Name'],
         amount: award['Award Amount'],
         startDate: award['Start Date'],
         endDate: award['End Date'],
