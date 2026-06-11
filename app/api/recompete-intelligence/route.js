@@ -4,24 +4,21 @@ export async function POST(request) {
   const keywords = body.service || body.industry || '';
 
   try {
-    const payload = {
-      filters: {
-        keywords: keywords ? [keywords] : [],
-        award_type_codes: ['A', 'B', 'C', 'D']
-      },
-      fields: [
-        'Award ID',
-        'Recipient Name',
-        'Award Amount',
-        'Awarding Agency',
-        'Start Date',
-        'End Date'
-      ],
-      limit: 3,
-      page: 1,
-      sort: 'End Date',
-      order: 'asc'
-    };
+   const payload = {
+  filters: {
+    keywords: keywords ? [keywords] : [],
+    award_type_codes: ['A', 'B', 'C', 'D']
+  },
+  fields: [
+    'Award ID',
+    'Recipient Name',
+    'Award Amount',
+    'Start Date',
+    'End Date'
+  ],
+  limit: 3,
+  page: 1
+};
 
     const response = await fetch(
       'https://api.usaspending.gov/api/v2/search/spending_by_award/',
@@ -56,8 +53,7 @@ export async function POST(request) {
       })
       .map((award) => ({
         awardId: award['Award ID'],
-        incumbent: award['Recipient Name'],
-        agency: award['Awarding Agency'],
+        incumbent: award['Recipient Name'],?>.......................
         amount: award['Award Amount'],
         startDate: award['Start Date'],
         endDate: award['End Date'],
@@ -71,16 +67,11 @@ export async function POST(request) {
           a.daysUntilExpiration - b.daysUntilExpiration
       );
 
-    return Response.json({
-      success: true,
-      query: keywords,
-      totalUpcomingRecompetes: recompetes.length,
-      recompetes,
-      summary:
-        recompetes.length > 0
-          ? `GovIntel identified ${recompetes.length} potential recompete opportunities within the next 6 months.`
-          : 'No upcoming recompete opportunities were identified.'
-    });
+   return Response.json({
+  success: true,
+  fieldsReturned: awards[0],
+  awards
+});
   } catch (error) {
     return Response.json(
       {
