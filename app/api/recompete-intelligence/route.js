@@ -71,8 +71,13 @@ order: 'asc'
 
    return Response.json({
   success: true,
-  fieldsReturned: awards[0],
-  awards
+  query: keywords,
+  totalUpcomingRecompetes: recompetes.length,
+  recompetes,
+  summary:
+    recompetes.length > 0
+      ? `GovIntel identified ${recompetes.length} potential recompete opportunities within the next 6 months.`
+      : 'No upcoming recompete opportunities were identified.'
 });
   } catch (error) {
     return Response.json(
