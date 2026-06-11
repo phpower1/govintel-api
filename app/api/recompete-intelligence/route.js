@@ -2,7 +2,6 @@ export async function POST(request) {
   const body = await request.json();
 
   const keywords = body.service || body.industry || '';
-  const monthsAhead = body.monthsAhead || 12;
 
   try {
     const payload = {
@@ -14,10 +13,9 @@ export async function POST(request) {
         'Award ID',
         'Recipient Name',
         'Award Amount',
-        'Start Date',
-        'End Date'
+        'Awarding Agency'
       ],
-      limit: 500,
+      limit: 10,
       page: 1,
       sort: 'Award Amount',
       order: 'desc'
@@ -37,63 +35,16 @@ export async function POST(request) {
     const data = await response.json();
     const awards = data.results || [];
 
-    const today = new Date();
-    const futureDate = new Date();
-    futureDate.setMonth(today.getMonth() + monthsAhead);
-
-    const recompetes = awards
-      .filter((award) => {
-        const endDate = award['End Date'];
-
-        if (!endDate) return false;
-
-        const expiration = new Date(endDate);
-
-        return expiration >= today && expiration <= futureDate;
-      })
-      .map((award) => {
-        const expiration = new Date(award['End Date']);
-        const daysUntilExpiration = Math.ceil(
-          (expiration - today) / (1000 * 60 * 60 * 24)
-        );
-
-        const priority = daysUntilExpiration <= 90
-          ? 'High'
-          : daysUntilExpiration <= 180
-          ? 'Medium'
-          : 'Low';
-
-        return {
-          awardId: award['Award ID'],
-          incumbent: award['Recipient Name'],
-          amount: award['Award Amount'],
-          startDate: award['Start Date'],
-          endDate: award['End Date'],
-          daysUntilExpiration,
-          priority,
-          recommendedAction: priority === 'High'
-            ? 'Begin capture activities immediately.'
-            : priority === 'Medium'
-            ? 'Start relationship building and market research.'
-            : 'Monitor this opportunity.'
-        };
-      })
-      .sort((a, b) => a.daysUntilExpiration - b.daysUntilExpiration);
-
     return Response.json({
       success: true,
       query: keywords,
-      monthsAhead,
-      totalUpcomingRecompetes: recompetes.length,
       debug: {
+        requestPayload: payload,
         totalAwardsRetrieved: awards.length,
-        firstEndDate: awards[0]?.['End Date'],
-        lastEndDate: awards[awards.length - 1]?.['End Date']
+        sampleAward: awards[0] || null,
+        rawMessages: data.messages || []
       },
-      recompetes,
-      summary: recompetes.length > 0
-        ? `GovIntel identified ${recompetes.length} potential recompete opportunities within the next ${monthsAhead} months.`
-        : `No upcoming recompete opportunities were identified within the next ${monthsAhead} months.`
+      awards
     });
   } catch (error) {
     return Response.json(
