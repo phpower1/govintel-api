@@ -19,8 +19,8 @@ export async function POST(request) {
       ],
       limit: 500,
       page: 1,
-      sort: 'End Date',
-      order: 'asc'
+      sort: 'Award Amount',
+      order: 'desc'
     };
 
     const response = await fetch(
