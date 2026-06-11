@@ -16,8 +16,10 @@ export async function POST(request) {
     'Start Date',
     'End Date'
   ],
-  limit: 3,
-  page: 1
+  limit: 100,
+page: 1,
+sort: 'End Date',
+order: 'asc'
 };
 
     const response = await fetch(
